@@ -1,3 +1,4 @@
+url:  https://velog.io/@su_under/
 title:  Redis로 캐싱 구현하기
 tags: None
 =====================================
@@ -11,7 +12,7 @@ tags:  circuitbreaker
 =====================================
 
 title:  크롤링이란? (+ 정적 크롤링 구현 예시)
-tags:  Crawling
+tags:  crawling
 =====================================
 
 title:  HTTP 메서드에 대해
@@ -19,7 +20,7 @@ tags:  http method
 =====================================
 
 title:  Grafana와 Slack 연동하여 Alert 설정하기
-tags:  Grafana
+tags:  grafana
 tags:  slack
 =====================================
 
@@ -29,7 +30,7 @@ tags:  docker
 =====================================
 
 title:  Docker와 Prometheus, Grafana 연동하기
-tags:  Grafana
+tags:  grafana
 tags:  docker
 tags:  prometheus
 =====================================
