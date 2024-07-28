@@ -13,7 +13,7 @@ title:  [kafka] 카프카 그나마 쉽게 알아보기
 tags:  kafka
 =====================================
 
-title:  [Go] Multi Thead in Go
+title:  [Go] Multi Thread in Go
 tags:  multi thead
 tags:  go
 =====================================
