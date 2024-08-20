@@ -39,7 +39,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.http.services.nest.loadbalancer.server.port=8000
-        - traefik.http.routers.nest.rule=Host(`go.localhost`) && PathPrefix(`/api/v1`)
+        - traefik.http.routers.nest.rule=Host(`nest.localhost`) && PathPrefix(`/api/v1`)
         - traefik.http.routers.nest.middlewares=nest-stripprefix
         - traefik.http.middlewares.nest-stripprefix.stripprefix.prefixes=/api/v1
 
