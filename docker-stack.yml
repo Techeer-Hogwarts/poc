@@ -23,7 +23,7 @@ services:
           - node.role == manager
 
   nest:
-    image: suhach0523/techeerism-nest:arm2
+    image: suhach0523/techeerism-nest:arm
     networks:
       - web
     deploy:
@@ -44,7 +44,7 @@ services:
         - traefik.http.middlewares.nest-stripprefix.stripprefix.prefixes=/api/v1
 
   go:
-    image: suhach0523/techeerism-parser:arm
+    image: suhach0523/techeerism-parser:arm2
     networks:
       - web
     deploy:
@@ -63,6 +63,20 @@ services:
         - traefik.http.routers.go.rule=Host(`go.localhost`) && PathPrefix(`/api/v1`)
         - traefik.http.routers.go.middlewares=go-stripprefix
         - traefik.http.middlewares.go-stripprefix.stripprefix.prefixes=/api/v1"
+  
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - web 
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    deploy:
+      replicas: 1
+  
 
 networks:
   web:
