@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/rabbitmq/amqp091-go"
@@ -59,6 +60,30 @@ func main() {
 
 	fmt.Println("Enter tasks to send to the queue. Type 'exit' to quit.")
 
+	// Wait group to handle concurrent tasks
+	var wg sync.WaitGroup
+
+	// Start goroutine to handle task completion
+	go func() {
+		for {
+			select {
+			case msg := <-pubsub.Channel():
+				// Fetch task details from Redis
+				taskID := msg.Payload
+				taskDetails, err := rdb.HGetAll(ctx, taskID).Result()
+				if err != nil {
+					log.Printf("Failed to fetch task details from Redis: %v", err)
+					continue
+				}
+				result := taskDetails["result"]
+				fmt.Printf("Task %s is complete! Result: %s\n", taskID, result)
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	// Handle user input
 	for {
 		fmt.Print("> ")
 		scanner.Scan()
@@ -91,23 +116,11 @@ func main() {
 			}
 
 			fmt.Printf("Sent task: %s\n", input)
-
-			// Wait for task completion notification
-			msg, err := pubsub.ReceiveMessage(ctx)
-			if err != nil {
-				log.Fatalf("Failed to receive message from Redis: %v", err)
-			}
-			if msg.Payload == taskID {
-				// Fetch task details from Redis
-				taskDetails, err := rdb.HGetAll(ctx, taskID).Result()
-				if err != nil {
-					log.Fatalf("Failed to fetch task details from Redis: %v", err)
-				}
-				result := taskDetails["result"]
-				fmt.Printf("Task %s is complete! Result: %s\n", taskID, result)
-			}
 		}
 	}
+
+	// Wait for all goroutines to finish
+	wg.Wait()
 }
 
 // Helper function to publish tasks to RabbitMQ
