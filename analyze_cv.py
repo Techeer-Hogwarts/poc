@@ -2,35 +2,6 @@ import os
 import pdfplumber
 import re
 
-def format_text(input_text):
-    # 괄호 안의 내용을 임시로 치환합니다.
-    bracket_contents = []
-    def replace_brackets(match):
-        # print(match.group(0))
-        bracket_contents.append(match.group(0))  # 괄호 안의 내용을 저장합니다.
-        return f"{{BRACKET_CONTENTS_{len(bracket_contents)-1}}}"  # 임시 문자열로 치환합니다.
-
-    text = re.sub(r'\([^)]*\)', replace_brackets, input_text)  # 괄호 안의 내용을 임시 문자열로 치환합니다.
-
-    # '제 n 장', '제 n 절', '제 n 조' 앞에 줄바꿈 추가합니다. 괄호 안의 내용은 제외됩니다.
-    text = re.sub(r'(제\s*\d+\s*장)', r'\n\1', text)
-    text = re.sub(r'(제\s*\d+\s*절)', r'\n\1', text)
-    text = re.sub(r'(제\s*\d+\s*조)', r'\n\1', text)
-
-    # 여러 개의 연속된 줄바꿈을 하나로 변환합니다.
-    text = re.sub(r'\n+', '\n', text)
-
-    # 임시로 치환했던 괄호 안의 내용을 원래대로 복원합니다.
-    for i, content in enumerate(bracket_contents):
-        text = text.replace(f"{{BRACKET_CONTENTS_{i}}}", content)
-
-    return text
-
-# def last_format_text(input_text):
-#     # '제 n 장', '제 n 절', '제 n 조' 앞에 줄바꿈 추가
-#     text = re.sub(r'(제\s*\d+\s*장)', r'\n\1', input_text)
-#     return text
-
 def extract_text_with_page_numbers(filename, input_path, output_path):
     """PDF 파일에서 텍스트를 추출하고, 줄바꿈을 다 없애서, 이를 텍스트 파일로 저장합니다."""
     output_path_txt = os.path.join(output_path, filename + '.txt')  # 텍스트 파일을 저장할 경로를 설정합니다.
@@ -60,7 +31,6 @@ def extract_text_with_page_numbers(filename, input_path, output_path):
                             page_text = re.sub(pattern, '', page_text, 1)
                         else:
                             page_text = page_text.replace(pattern, '', 1)
-
                 text += page_text
             print(text)
             with open(output_path_txt, 'w', encoding='utf-8') as outfile:  # 추출된 텍스트를 저장할 파일을 엽니다.
